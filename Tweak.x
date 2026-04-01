@@ -102,6 +102,19 @@
 }
 %end
 
+// Block interstitial ads (full screen ads on tab switches)
+%hook SoundCloudPatchedSwiftClassNameDisplayAdInterstitialController
+- (void)show {
+}
+- (void)showAd {
+}
+- (void)presentAd {
+}
+- (bool)isAdReady {
+    return NO;
+}
+%end
+
 %ctor {
     %init(
         SoundCloudPatchedSwiftClassNamePlayQueueItemTrackEntity = objc_getClass("SoundCloud.PlayQueueItemTrackEntity"),
@@ -110,6 +123,7 @@
         SoundCloudPatchedSwiftClassNameAudioAdPlayerEventController = objc_getClass("SoundCloud.AudioAdPlayerEventController"),
         SoundCloudPatchedSwiftClassNameDisplayAdBannerFeatureProvider = objc_getClass("Ads.DisplayAdBannerFeatureProvider"),
         SoundCloudPatchedSwiftClassNamePromotedTrackChecker = objc_getClass("SoundCloud.PromotedTrackChecker"),
-        SoundCloudPatchedSwiftClassNameHomeBannerView = objc_getClass("SoundCloud.HomeBannerView")
+        SoundCloudPatchedSwiftClassNameHomeBannerView = objc_getClass("SoundCloud.HomeBannerView"),
+        SoundCloudPatchedSwiftClassNameDisplayAdInterstitialController = objc_getClass("Ads.DisplayAdInterstitialController")
     );
 }
