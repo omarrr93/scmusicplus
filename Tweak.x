@@ -98,7 +98,7 @@
 %hook SoundCloudPatchedSwiftClassNameHomeBannerView
 - (void)didMoveToWindow {
     %orig;
-    self.hidden = YES;
+    ((UIView *)self).hidden = YES;
 }
 %end
 
