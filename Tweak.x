@@ -7,7 +7,7 @@
 }
 %end
 
-// ObjC class - still present in 8.52.1, signature unchanged.
+// ObjC class - still present in 8.52.1, signature unchanged
 %hook PlayQueueTrack
 - (bool)isMonetizable {
     return NO;
@@ -30,13 +30,11 @@
 %end
 
 // FIXED: was returning NULL which killed the entire playback pipeline.
-// Now returns a real instance but neutralises all ad event handling.
 %hook SoundCloudPatchedSwiftClassNameAudioAdPlayerEventController
 - (id)init {
-    return %orig; // Let it init normally so playback pipeline doesn't break
+    return %orig;
 }
 - (void)handleEvent:(id)arg1 {
-    // swallow ad events
 }
 - (void)adDidStart:(id)arg1 {
 }
@@ -76,11 +74,42 @@
 }
 %end
 
+// Banner ad display provider - disable all banner ad slots
+%hook SoundCloudPatchedSwiftClassNameDisplayAdBannerFeatureProvider
+- (bool)canShowPlaylistDisplayAdBanner {
+    return NO;
+}
+- (bool)canShowTrackPageDisplayAdBanner {
+    return NO;
+}
+- (bool)canShowDisplayAdsOnProfileAndLibraryAndSearch {
+    return NO;
+}
+%end
+
+// Promoted/sponsored tracks in feed
+%hook SoundCloudPatchedSwiftClassNamePromotedTrackChecker
+- (bool)isPromotedTrackFor:(id)arg1 with:(id)arg2 {
+    return NO;
+}
+%end
+
+// Hide banner ad container views by zeroing their height constraint
+%hook SoundCloudPatchedSwiftClassNameHomeBannerView
+- (void)didMoveToWindow {
+    %orig;
+    self.hidden = YES;
+}
+%end
+
 %ctor {
     %init(
         SoundCloudPatchedSwiftClassNamePlayQueueItemTrackEntity = objc_getClass("SoundCloud.PlayQueueItemTrackEntity"),
         SoundCloudPatchedSwiftClassNameUserFeaturesService = objc_getClass("SoundCloud.UserFeaturesService"),
         SoundCloudPatchedSwiftClassNameUpsellManager = objc_getClass("SoundCloud.UpsellManager"),
-        SoundCloudPatchedSwiftClassNameAudioAdPlayerEventController = objc_getClass("SoundCloud.AudioAdPlayerEventController")
+        SoundCloudPatchedSwiftClassNameAudioAdPlayerEventController = objc_getClass("SoundCloud.AudioAdPlayerEventController"),
+        SoundCloudPatchedSwiftClassNameDisplayAdBannerFeatureProvider = objc_getClass("Ads.DisplayAdBannerFeatureProvider"),
+        SoundCloudPatchedSwiftClassNamePromotedTrackChecker = objc_getClass("SoundCloud.PromotedTrackChecker"),
+        SoundCloudPatchedSwiftClassNameHomeBannerView = objc_getClass("SoundCloud.HomeBannerView")
     );
 }
