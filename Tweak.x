@@ -1,11 +1,13 @@
 #import <UIKit/UIKit.h>
 
+// ObjC class - still present in 8.52.1
 %hook AdPlayQueueManager
 - (bool)isItemMonetizable:(id)arg1 {
     return NO;
 }
 %end
 
+// ObjC class - still present in 8.52.1, signature unchanged.
 %hook PlayQueueTrack
 - (bool)isMonetizable {
     return NO;
